@@ -13,11 +13,7 @@ type Milestone = {
 export default function Home() {
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [newMilestone, setNewMilestone] = useState({
-    name: '',
-    days: '',
-    message: ''
-  });
+  const [newMilestone, setNewMilestone] = useState({ name: '', days: '', message: '' });
 
   useEffect(() => {
     const saved = localStorage.getItem('soberMilestones');
@@ -41,18 +37,18 @@ export default function Home() {
   const totalDays = milestones.reduce((sum, m) => sum + m.days, 0);
 
   const triggerConfetti = () => {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 120; i++) {
       setTimeout(() => {
         const confetti = document.createElement('div');
         confetti.className = 'confetti';
         confetti.style.left = Math.random() * 100 + 'vw';
         confetti.style.backgroundColor = ['#10b981', '#8b5cf6', '#eab308', '#ec4899', '#f43f5e'][Math.floor(Math.random() * 5)];
-        confetti.style.width = confetti.style.height = (Math.random() * 9 + 7) + 'px';
-        confetti.style.animationDuration = (Math.random() * 3.5 + 2.5) + 's';
-        confetti.style.opacity = Math.random() * 0.8 + 0.6 + '';
+        confetti.style.width = confetti.style.height = (Math.random() * 10 + 8) + 'px';
+        confetti.style.animationDuration = (Math.random() * 3.8 + 2.8) + 's';
+        confetti.style.opacity = (Math.random() * 0.7 + 0.6).toString();
         document.body.appendChild(confetti);
-        setTimeout(() => confetti.remove(), 6000);
-      }, i * 25);
+        setTimeout(() => confetti.remove(), 7000);
+      }, i * 20);
     }
   };
 
@@ -62,9 +58,9 @@ export default function Home() {
 
     const milestone: Milestone = {
       id: Date.now(),
-      name: newMilestone.name,
+      name: newMilestone.name.trim(),
       days: parseInt(newMilestone.days),
-      message: newMilestone.message || "Celebrating this milestone today!",
+      message: newMilestone.message.trim() || "Celebrating this milestone today!",
       date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
     };
 
@@ -80,9 +76,15 @@ export default function Home() {
     }
   };
 
+  const shareApp = () => {
+    const text = `Every sober day is worth celebrating 🌟\n\nI've been celebrating recovery with this beautiful app. Join me?`;
+    navigator.share?.({ title: "Sober Celebrations", text })
+      .catch(() => alert("Copy this link and share it:\nhttps://your-app-url.vercel.app"));
+  };
+
   return (
-    <main className="max-w-4xl mx-auto pb-12 px-4 sm:px-6">
-      <div className="text-center py-10 sm:py-12">
+    <main className="max-w-4xl mx-auto pb-20 px-4 sm:px-6">
+      <div className="text-center py-12">
         <div className="inline-block px-6 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium mb-6">
           Together We Celebrate Recovery
         </div>
@@ -90,33 +92,34 @@ export default function Home() {
           Every sober day<br />is worth celebrating
         </h1>
         
-        <div className="inline-flex items-baseline gap-2 bg-white rounded-2xl px-6 py-3 shadow-sm border border-emerald-100 mb-8">
-          <span className="text-4xl">🌟</span>
+        <div className="inline-flex items-baseline gap-3 bg-white rounded-3xl px-8 py-4 shadow-sm border border-emerald-100 mb-10">
+          <span className="text-5xl">🌟</span>
           <div>
-            <div className="text-3xl font-bold text-emerald-600">{totalDays.toLocaleString()}</div>
-            <div className="text-sm text-slate-600 -mt-1">Total days celebrated together</div>
+            <div className="text-4xl font-bold text-emerald-600">{totalDays.toLocaleString()}</div>
+            <div className="text-sm text-slate-600">Total days celebrated together</div>
           </div>
         </div>
       </div>
 
-      <div className="flex justify-center mb-10 sm:mb-12">
+      <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
         <button 
           onClick={() => setShowForm(true)}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold flex items-center gap-3 shadow-lg transition-all active:scale-95 w-full sm:w-auto justify-center"
+          className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-all"
         >
           🎉 Add New Sober Birthday
+        </button>
+        <button 
+          onClick={shareApp}
+          className="bg-white border border-slate-300 hover:bg-slate-50 px-8 py-4 rounded-2xl text-lg font-semibold flex items-center justify-center gap-3 active:scale-95 transition-all"
+        >
+          Share this App 💞
         </button>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-6">
         {milestones.map((milestone) => (
-          <div key={milestone.id} className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100 hover:border-emerald-200 transition-all relative">
-            <button
-              onClick={() => deleteMilestone(milestone.id)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-red-500 text-2xl leading-none"
-            >
-              ×
-            </button>
+          <div key={milestone.id} className="milestone-card bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100 hover:border-emerald-200 relative">
+            <button onClick={() => deleteMilestone(milestone.id)} className="absolute top-4 right-4 text-slate-400 hover:text-red-500 text-3xl leading-none">×</button>
 
             <div className="flex justify-between items-start mb-6">
               <div>
@@ -126,7 +129,7 @@ export default function Home() {
               <div className="text-5xl">🎊</div>
             </div>
 
-            <div className="font-semibold text-xl mb-2">{milestone.name}</div>
+            <div className="font-semibold text-xl mb-3">{milestone.name}</div>
             <div className="text-slate-600 mb-6 leading-relaxed">"{milestone.message}"</div>
             <div className="text-xs text-slate-500">{milestone.date}</div>
           </div>
@@ -148,7 +151,7 @@ export default function Home() {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Celebration Message (optional)</label>
-                <textarea value={newMilestone.message} onChange={(e) => setNewMilestone({...newMilestone, message: e.target.value})} className="w-full px-4 py-3 border border-slate-300 rounded-3xl focus:outline-none focus:border-emerald-500 h-24" placeholder="This journey has changed my life..." />
+                <textarea value={newMilestone.message} onChange={(e) => setNewMilestone({...newMilestone, message: e.target.value})} className="w-full px-4 py-3 border border-slate-300 rounded-3xl focus:outline-none focus:border-emerald-500 h-24 resize-y" placeholder="This journey has changed my life..." />
               </div>
               <div className="flex gap-4 pt-4">
                 <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-4 border border-slate-300 rounded-2xl font-medium">Cancel</button>
@@ -158,6 +161,10 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      <footer className="text-center text-slate-400 text-sm mt-16">
+        Made with love for every sober day 💗
+      </footer>
     </main>
   );
 }
