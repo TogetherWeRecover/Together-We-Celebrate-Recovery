@@ -1,6 +1,7 @@
+```tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 type Milestone = {
   id: number;
@@ -42,6 +43,24 @@ export default function Home() {
     message: ''
   });
 
+  // Total sober days counter
+  const totalDays = milestones.reduce((sum, m) => sum + m.days, 0);
+
+  const triggerConfetti = () => {
+    for (let i = 0; i < 80; i++) {
+      setTimeout(() => {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = ['#10b981', '#8b5cf6', '#eab308', '#ec4899'][Math.floor(Math.random() * 4)];
+        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        document.body.appendChild(confetti);
+
+        setTimeout(() => confetti.remove(), 5000);
+      }, i * 30);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMilestone.name || !newMilestone.days) return;
@@ -57,21 +76,29 @@ export default function Home() {
     setMilestones([milestone, ...milestones]);
     setNewMilestone({ name: '', days: '', message: '' });
     setShowForm(false);
+    
+    // Celebrate!
+    triggerConfetti();
   };
 
   return (
     <main className="max-w-4xl mx-auto pb-12">
-      {/* Hero Section */}
-      <div className="text-center py-16 px-4">
+      {/* Hero + Total Counter */}
+      <div className="text-center py-12 px-4">
         <div className="inline-block px-6 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium mb-6">
           Together We Celebrate Recovery
         </div>
-        <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-6">
+        <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4">
           Every sober day<br />is worth celebrating
         </h1>
-        <p className="text-xl text-slate-600 max-w-md mx-auto">
-          A beautiful space to honor recovery milestones and support one another.
-        </p>
+        
+        <div className="inline-flex items-baseline gap-2 bg-white rounded-2xl px-6 py-3 shadow-sm border border-emerald-100 mb-8">
+          <span className="text-4xl">🌟</span>
+          <div>
+            <div className="text-3xl font-bold text-emerald-600">{totalDays.toLocaleString()}</div>
+            <div className="text-sm text-slate-600 -mt-1">Total days celebrated together</div>
+          </div>
+        </div>
       </div>
 
       {/* Add Button */}
@@ -169,3 +196,4 @@ export default function Home() {
     </main>
   );
 }
+```
