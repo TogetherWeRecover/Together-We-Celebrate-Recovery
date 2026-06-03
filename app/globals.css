@@ -15,7 +15,7 @@ body {
   z-index: 9999;
   pointer-events: none;
   animation: fall linear forwards;
-  box-shadow: 0 0 6px rgba(255,255,255,0.8);
+  box-shadow: 0 0 8px rgba(255,255,255,0.9);
 }
 
 @keyframes fall {
@@ -25,7 +25,12 @@ body {
   }
 }
 
-/* Better mobile spacing */
-main {
-  padding-bottom: 80px;
+/* Card hover lift */
+.milestone-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.milestone-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
