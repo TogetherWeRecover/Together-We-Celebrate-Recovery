@@ -1,4 +1,3 @@
-```tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -12,30 +11,7 @@ type Milestone = {
 };
 
 export default function Home() {
-  const [milestones, setMilestones] = useState<Milestone[]>([
-    {
-      id: 1,
-      name: "Sarah K.",
-      days: 1847,
-      message: "One day at a time turned into over 5 years. Grateful beyond words.",
-      date: "March 12, 2020"
-    },
-    {
-      id: 2,
-      name: "Marcus T.",
-      days: 623,
-      message: "My kids have their dad back. That's everything.",
-      date: "October 18, 2024"
-    },
-    {
-      id: 3,
-      name: "Elena R.",
-      days: 90,
-      message: "90 days today. First time in my adult life. Feeling hopeful.",
-      date: "Today"
-    },
-  ]);
-
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [newMilestone, setNewMilestone] = useState({
     name: '',
@@ -43,7 +19,46 @@ export default function Home() {
     message: ''
   });
 
-  // Total sober days counter
+  // Load from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('soberMilestones');
+    if (saved) {
+      setMilestones(JSON.parse(saved));
+    } else {
+      // Default milestones if nothing saved yet
+      const defaults: Milestone[] = [
+        {
+          id: 1,
+          name: "Sarah K.",
+          days: 1847,
+          message: "One day at a time turned into over 5 years. Grateful beyond words.",
+          date: "March 12, 2020"
+        },
+        {
+          id: 2,
+          name: "Marcus T.",
+          days: 623,
+          message: "My kids have their dad back. That's everything.",
+          date: "October 18, 2024"
+        },
+        {
+          id: 3,
+          name: "Elena R.",
+          days: 90,
+          message: "90 days today. First time in my adult life. Feeling hopeful.",
+          date: "Today"
+        },
+      ];
+      setMilestones(defaults);
+      localStorage.setItem('soberMilestones', JSON.stringify(defaults));
+    }
+  }, []);
+
+  // Save to localStorage whenever milestones change
+  useEffect(() => {
+    localStorage.setItem('soberMilestones', JSON.stringify(milestones));
+  }, [milestones]);
+
   const totalDays = milestones.reduce((sum, m) => sum + m.days, 0);
 
   const triggerConfetti = () => {
@@ -55,7 +70,6 @@ export default function Home() {
         confetti.style.backgroundColor = ['#10b981', '#8b5cf6', '#eab308', '#ec4899'][Math.floor(Math.random() * 4)];
         confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
         document.body.appendChild(confetti);
-
         setTimeout(() => confetti.remove(), 5000);
       }, i * 30);
     }
@@ -70,25 +84,27 @@ export default function Home() {
       name: newMilestone.name,
       days: parseInt(newMilestone.days),
       message: newMilestone.message || "Celebrating this milestone today!",
-      date: "Today"
+      date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
     };
 
     setMilestones([milestone, ...milestones]);
     setNewMilestone({ name: '', days: '', message: '' });
     setShowForm(false);
-    
-    // Celebrate!
     triggerConfetti();
   };
 
+  const deleteMilestone = (id: number) => {
+    setMilestones(milestones.filter(m => m.id !== id));
+  };
+
   return (
-    <main className="max-w-4xl mx-auto pb-12">
+    <main className="max-w-4xl mx-auto pb-12 px-4 sm:px-6">
       {/* Hero + Total Counter */}
-      <div className="text-center py-12 px-4">
+      <div className="text-center py-10 sm:py-12">
         <div className="inline-block px-6 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium mb-6">
           Together We Celebrate Recovery
         </div>
-        <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-4">
           Every sober day<br />is worth celebrating
         </h1>
         
@@ -102,19 +118,26 @@ export default function Home() {
       </div>
 
       {/* Add Button */}
-      <div className="flex justify-center mb-12">
+      <div className="flex justify-center mb-10 sm:mb-12">
         <button 
           onClick={() => setShowForm(true)}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold flex items-center gap-3 shadow-lg transition-all active:scale-95"
+          className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold flex items-center gap-3 shadow-lg transition-all active:scale-95 w-full sm:w-auto justify-center"
         >
           🎉 Add New Sober Birthday
         </button>
       </div>
 
       {/* Milestones Grid */}
-      <div className="grid md:grid-cols-2 gap-6 px-4">
+      <div className="grid sm:grid-cols-2 gap-6">
         {milestones.map((milestone) => (
-          <div key={milestone.id} className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 hover:border-emerald-200 transition-all">
+          <div key={milestone.id} className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100 hover:border-emerald-200 transition-all relative">
+            <button
+              onClick={() => deleteMilestone(milestone.id)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-red-500 text-xl leading-none"
+            >
+              ×
+            </button>
+
             <div className="flex justify-between items-start mb-6">
               <div>
                 <div className="text-5xl font-bold text-emerald-600">{milestone.days}</div>
@@ -196,4 +219,3 @@ export default function Home() {
     </main>
   );
 }
-```
