@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --primary: #10b981;     /* Emerald - recovery, growth, hope */
+  --primary-dark: #059669;
+  --accent: #8b5cf6;      /* Violet for celebration */
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+main {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+/* Beautiful celebration touches */
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(800px) rotate(720deg);
+    opacity: 0;
+  }
+}
