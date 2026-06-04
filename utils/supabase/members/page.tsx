@@ -1,8 +1,8 @@
-```tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
+import Navigation from '../components/Navigation';
 
 type Profile = {
   id: string;
@@ -23,7 +23,7 @@ export default function MembersPage() {
     async function fetchMembers() {
       const { data } = await supabase
         .from('profiles')
-        .select('id, name, sobriety_date')   // Phone is intentionally NEVER selected
+        .select('id, name, sobriety_date')
         .order('sobriety_date', { ascending: false });
 
       if (data) setProfiles(data);
@@ -72,10 +72,10 @@ export default function MembersPage() {
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-emerald-50 via-sky-50 to-blue-50 pb-20">
+    <main className="min-h-screen bg-gradient-to-br from-emerald-50 via-sky-50 to-blue-50 pb-24">
       <div className="max-w-6xl mx-auto p-6">
-        {/* Header with logo feel */}
-        <div className="text-center mb-10">
+        {/* Header */}
+        <div className="text-center mb-10 pt-8">
           <div className="inline-flex items-center gap-3 mb-4">
             <div className="text-5xl">🤝</div>
             <div className="text-5xl">✨</div>
@@ -142,7 +142,8 @@ export default function MembersPage() {
           Phone numbers are never visible here — even to the app owner 💗
         </div>
       </div>
+
+      <Navigation />
     </main>
   );
 }
-```
